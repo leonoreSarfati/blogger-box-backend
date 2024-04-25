@@ -16,15 +16,20 @@ public class PostServiceImpl implements PostService {
 
     public PostServiceImpl(){
         this.temporaryPosts = new ArrayList<>();
-        temporaryPosts.add(new Post("Title 1", "My first content", UUID.randomUUID()));
-        temporaryPosts.add(new Post("Title 2", "My second content", UUID.randomUUID()));
-        temporaryPosts.add(new Post("Title 3", "My third content", UUID.randomUUID()));
+        temporaryPosts.add(new Post("Title 1", "My first content"));
+        temporaryPosts.add(new Post("Title 2", "My second content"));
+        temporaryPosts.add(new Post("Title 3", "My third content"));
     }
-    @Override
+  /*  @Override
     public List<Post> getAllByCategoryId(UUID categoryId) {
         return temporaryPosts.stream()
                 .filter(post -> categoryId.equals(post.getCategoryId()))
                 .toList();
+    }*/
+
+    @Override
+    public List<Post> getAllByCategoryId(UUID categoryId) {
+        return null;
     }
 
     @Override
@@ -42,7 +47,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Post create(String title, String content, UUID categoryId) {
-        Post post = new Post(title, content, categoryId);
+        Post post = new Post(title, content);
         temporaryPosts.add(post);
         return post;
     }
