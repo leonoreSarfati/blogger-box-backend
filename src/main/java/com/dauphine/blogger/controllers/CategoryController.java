@@ -4,6 +4,7 @@ import com.dauphine.blogger.dto.CreationCategoryRequest;
 import com.dauphine.blogger.dto.UpdateCategoryRequest;
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
+import com.dauphine.blogger.services.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,13 +22,10 @@ import java.util.UUID;
 )
 public class CategoryController {
 
-    private final List<Category> temporaryCategories;
+    private final CategoryService categoryService;
 
-    public CategoryController(){
-        temporaryCategories = new ArrayList<>();
-        temporaryCategories.add(new Category(UUID.randomUUID(), "my first category"));
-        temporaryCategories.add(new Category(UUID.randomUUID(), "my second category"));
-        temporaryCategories.add(new Category(UUID.randomUUID(), "my third category"));
+    public CategoryController(CategoryService categoryService){
+        this.categoryService = categoryService;
     }
 
     @GetMapping("")
@@ -35,7 +33,7 @@ public class CategoryController {
             summary = "Get all categories"
     )
     public List<Category> getAllCategories(){
-        return temporaryCategories;
+        return categoryService.getAll();
     }
 
     @GetMapping("/{id}")
@@ -45,43 +43,39 @@ public class CategoryController {
     public Category getCategoryByID(
             @Parameter(description = "Id of the category to retrieve")
             @PathVariable UUID id){
-        //TODO
-        return temporaryCategories.get(0);
+        return categoryService.getById(id);
     }
 
     @PostMapping("")
     @Operation(
             summary = "Create new category"
     )
-    public String createCategory(
+    public Category createCategory(
             @Parameter(description = "Object with the neesary parameters to update a category")
-            @RequestBody CreationCategoryRequest body){
-        //TODO
-        return "Create new element with name " + body.getName();
+            @RequestBody String name){
+        return categoryService.create(name);
     }
 
     @PutMapping("/{id}")
     @Operation(
             summary = "Update name category"
     )
-    public String updateCategory(
+    public Category updateCategory(
             @Parameter(description = "Id of the category to update")
             @PathVariable UUID id,
             @Parameter(description = "Object with the needed parameters to create a new category")
-            @RequestBody UpdateCategoryRequest body){
-        //TODO
-        return "Update name of category with id " + id;
+            @RequestBody String name){
+        return categoryService.update(id,name);
     }
 
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Delete category"
     )
-    public String deleteCategory(
+    public void deleteCategory(
             @Parameter(description = "Id of the category to retrieve")
             @PathVariable UUID id){
-        //TODO
-        return "Delete category with id " + id;
+        categoryService.deleteById(id);
     }
 
     @GetMapping("/{id}/posts")
