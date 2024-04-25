@@ -1,17 +1,16 @@
 package com.dauphine.blogger.controllers;
 
-import com.dauphine.blogger.dto.CreationCategoryRequest;
 import com.dauphine.blogger.dto.CreationPostRequest;
-import com.dauphine.blogger.dto.UpdateCategoryRequest;
 import com.dauphine.blogger.dto.UpdatePostRequest;
+import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
+import com.dauphine.blogger.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,47 +22,57 @@ import java.util.UUID;
 )
 public class PostController {
 
+    private final PostService postService;
+
+    public PostController(PostService postService) {
+        this.postService = postService;
+    }
+
+    @GetMapping("")
+    @Operation(
+            summary = "Get all categories"
+    )
+    public List<Post> getAllPosts(){
+        return postService.getAll();
+    }
+
     @PostMapping("")
     @Operation(
             summary = "Create new post"
     )
-    public String createPost(
+    public Post createPost(
             @Parameter(description = "Object with the necessary parameters to create a new post")
             @RequestBody CreationPostRequest body){
-        //TODO
-        return "Create new post with name " + body.getTitle();
+        return postService.create(body.getTitle(), body.getContent(), body.getCategoryId());
     }
 
     @PutMapping("/{id}")
     @Operation(
             summary = "Update post"
     )
-    public String updatePost(
+    public Post updatePost(
             @Parameter(description = "Id of the post to update")
             @PathVariable UUID id,
             @Parameter(description = "Object with the necessary parameters to update a new post")
             @RequestBody UpdatePostRequest body){
-        //TODO
-        return "Update post with id " + id;
+        return postService.update(id, body.getTitle(), body.getContent());
     }
 
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Delete a post"
     )
-    public String deletePost(
+    public void deletePost(
             @Parameter(description = "Id of the post to delete")
             @PathVariable UUID id){
-        //TODO
-        return "Delete post with id " + id;
+        postService.deleteById(id);
     }
 
     @GetMapping("")
     @Operation(
             summary = "Posts ordered by creation date"
     )
-    public List<Post> getPostsOrderedByDate(){
-        //TODO
+    public List<Post> getAllPostsOrderedByDate(){
         return new ArrayList<>();
     }
 

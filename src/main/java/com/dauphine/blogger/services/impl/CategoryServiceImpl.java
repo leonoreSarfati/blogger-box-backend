@@ -48,6 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(category!=null){
             category.setName(newName);
         }
+        //TODO save in database
         return category;
     }
 
