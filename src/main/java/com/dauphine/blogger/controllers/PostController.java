@@ -43,7 +43,7 @@ public class PostController {
     public Post createPost(
             @Parameter(description = "Object with the necessary parameters to create a new post")
             @RequestBody CreationPostRequest body){
-        return postService.create(body.getTitle(), body.getContent(), body.getCategoryId());
+        return postService.create(body.getTitle(), body.getContent(), body.getCategory());
     }
 
     @PutMapping("/{id}")
@@ -66,14 +66,6 @@ public class PostController {
             @Parameter(description = "Id of the post to delete")
             @PathVariable UUID id){
         postService.deleteById(id);
-    }
-
-    @GetMapping("")
-    @Operation(
-            summary = "Posts ordered by creation date"
-    )
-    public List<Post> getAllPostsOrderedByDate(){
-        return new ArrayList<>();
     }
 
 }

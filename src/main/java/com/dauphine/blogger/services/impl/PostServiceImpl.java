@@ -2,6 +2,7 @@ package com.dauphine.blogger.services.impl;
 
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
+import com.dauphine.blogger.repositories.PostRepository;
 import com.dauphine.blogger.services.PostService;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,10 @@ public class PostServiceImpl implements PostService {
 
     private final List<Post> temporaryPosts;
 
-    public PostServiceImpl(){
+    private final PostRepository repository;
+
+    public PostServiceImpl(PostRepository repository){
+        this.repository = repository;
         this.temporaryPosts = new ArrayList<>();
         temporaryPosts.add(new Post("Title 1", "My first content"));
         temporaryPosts.add(new Post("Title 2", "My second content"));
@@ -34,39 +38,34 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> getAll() {
-        return temporaryPosts;
+        return repository.findAll();
     }
 
     @Override
     public Post getById(UUID id) {
-        return temporaryPosts.stream()
-                .filter(post -> id.equals(post.getId()))
-                .findFirst()
+        return repository.findById(id)
                 .orElse(null);
     }
 
     @Override
-    public Post create(String title, String content, UUID categoryId) {
+    public Post create(String title, String content, Category category) {
         Post post = new Post(title, content);
-        temporaryPosts.add(post);
-        return post;
+        return repository.save(post);
     }
 
     @Override
     public Post update(UUID id, String title, String content) {
-        Post post = temporaryPosts.stream()
-                .filter(c -> id.equals(c.getId()))
-                .findFirst()
-                .orElse(null);
-        if(post!=null){
-            post.setTitle(title);
-            post.setContent(content);
+        Post post = getById(id);
+        if(post==null){
+            return null;
         }
-        return post;
+        post.setTitle(title);
+        post.setContent(content);
+        return repository.save(post);
     }
 
     @Override
     public void deleteById(UUID id) {
-        temporaryPosts.removeIf(post -> id.equals(post.getId()));
+        repository.deleteById(id);
     }
 }

@@ -1,12 +1,14 @@
 package com.dauphine.blogger.dto;
 
+import com.dauphine.blogger.models.Category;
+
 import java.util.UUID;
 
 public class CreationPostRequest {
 
     private String title;
     private String content;
-    private UUID categoryId;
+    private Category category;
 
     public String getContent() {
         return content;
@@ -16,7 +18,8 @@ public class CreationPostRequest {
         return title;
     }
 
-    public UUID getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
+
 }
