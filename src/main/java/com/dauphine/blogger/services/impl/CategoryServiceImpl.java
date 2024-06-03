@@ -1,5 +1,8 @@
 package com.dauphine.blogger.services.impl;
 
+import com.dauphine.blogger.exceptions.CategoryNameAlreadyExistsException;
+import com.dauphine.blogger.exceptions.CategoryNotFoundByIdException;
+import com.dauphine.blogger.exceptions.CategoryNotFoundByNameException;
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.repositories.CategoryRepository;
 import com.dauphine.blogger.services.CategoryService;
@@ -29,22 +32,33 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category getById(UUID id) {
-        return repository.findById(id)
-                .orElse(null);
+    public List<Category> getAllByName(String name) throws CategoryNotFoundByNameException{
+        if(repository.findAllByName(name) != null){
+            throw new CategoryNotFoundByNameException(name);
+        }
+        return repository.findAllByName(name);
     }
 
     @Override
-    public Category create(String name) {
+    public Category getById(UUID id) throws CategoryNotFoundByIdException {
+        return repository.findById(id)
+                .orElseThrow(() -> new CategoryNotFoundByIdException(id));
+    }
+
+    @Override
+    public Category create(String name) throws CategoryNameAlreadyExistsException {
+        if(repository.findAllByName(name) != null){
+            throw new CategoryNameAlreadyExistsException(name);
+        }
         Category category = new Category(name);
         return repository.save(category);
     }
 
     @Override
-    public Category update(UUID id, String newName) {
+    public Category update(UUID id, String newName) throws CategoryNotFoundByIdException, CategoryNameAlreadyExistsException {
         Category category = getById(id);
-        if(category==null){
-            return null;
+        if(repository.findAllByName(newName) != null){
+            throw new CategoryNameAlreadyExistsException(newName);
         }
         category.setName(newName);
         return repository.save(category);

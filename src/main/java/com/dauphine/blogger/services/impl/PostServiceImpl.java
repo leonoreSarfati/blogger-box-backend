@@ -1,5 +1,7 @@
 package com.dauphine.blogger.services.impl;
 
+import com.dauphine.blogger.exceptions.CategoryNotFoundByIdException;
+import com.dauphine.blogger.exceptions.PostNotFoundByIdException;
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
 import com.dauphine.blogger.repositories.PostRepository;
@@ -42,9 +44,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post getById(UUID id) {
+    public Post getById(UUID id) throws PostNotFoundByIdException {
         return repository.findById(id)
-                .orElse(null);
+                .orElseThrow(() -> new PostNotFoundByIdException(id));
     }
 
     @Override
@@ -54,7 +56,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post update(UUID id, String title, String content) {
+    public Post update(UUID id, String title, String content) throws PostNotFoundByIdException {
         Post post = getById(id);
         if(post==null){
             return null;
