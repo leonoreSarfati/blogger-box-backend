@@ -32,10 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getAllByName(String name) throws CategoryNotFoundByNameException{
-        if(repository.findAllByName(name) != null){
-            throw new CategoryNotFoundByNameException(name);
-        }
+    public List<Category> getAllByName(String name) {
         return repository.findAllByName(name);
     }
 
@@ -47,7 +44,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category create(String name) throws CategoryNameAlreadyExistsException {
-        if(repository.findAllByName(name) != null){
+        if(!repository.findAllByName(name).isEmpty()){
             throw new CategoryNameAlreadyExistsException(name);
         }
         Category category = new Category(name);
@@ -57,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category update(UUID id, String newName) throws CategoryNotFoundByIdException, CategoryNameAlreadyExistsException {
         Category category = getById(id);
-        if(repository.findAllByName(newName) != null){
+        if(!repository.findAllByName(newName).isEmpty()){
             throw new CategoryNameAlreadyExistsException(newName);
         }
         category.setName(newName);
@@ -65,7 +62,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(UUID id) throws CategoryNotFoundByIdException {
+        getById(id);
         repository.deleteById(id);
     }
 }

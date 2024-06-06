@@ -26,10 +26,11 @@ public class Post {
     @JoinColumn(name="category_id")
     private Category category;
 
-    public Post(String title, String content){
+    public Post(String title, String content, Category category){
         this.id =UUID.randomUUID();
         this.content = content;
         this.title = title;
+        this.category = category;
         this.createdDate = new Date();
     }
 

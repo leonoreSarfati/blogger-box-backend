@@ -4,7 +4,6 @@ import com.dauphine.blogger.dto.CreationPostRequest;
 import com.dauphine.blogger.dto.UpdatePostRequest;
 import com.dauphine.blogger.exceptions.CategoryNotFoundByIdException;
 import com.dauphine.blogger.exceptions.PostNotFoundByIdException;
-import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
 import com.dauphine.blogger.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,8 +56,8 @@ public class PostController {
     )
     public ResponseEntity<Post> createPost(
             @Parameter(description = "Object with the necessary parameters to create a new post")
-            @RequestBody CreationPostRequest body){
-        Post post = postService.create(body.getTitle(), body.getContent(), body.getCategory());
+            @RequestBody CreationPostRequest body) throws CategoryNotFoundByIdException {
+        Post post = postService.create(body.getTitle(), body.getContent(), body.getCategoryId());
         return ResponseEntity
                 .created(URI.create("v1/posts/" + post.getId()))
                 .body(post);

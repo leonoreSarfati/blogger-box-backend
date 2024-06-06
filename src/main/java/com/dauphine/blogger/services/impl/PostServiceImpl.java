@@ -5,6 +5,7 @@ import com.dauphine.blogger.exceptions.PostNotFoundByIdException;
 import com.dauphine.blogger.models.Category;
 import com.dauphine.blogger.models.Post;
 import com.dauphine.blogger.repositories.PostRepository;
+import com.dauphine.blogger.services.CategoryService;
 import com.dauphine.blogger.services.PostService;
 import org.springframework.stereotype.Service;
 
@@ -15,16 +16,13 @@ import java.util.UUID;
 @Service
 public class PostServiceImpl implements PostService {
 
-    private final List<Post> temporaryPosts;
-
     private final PostRepository repository;
 
-    public PostServiceImpl(PostRepository repository){
+    private final CategoryService categoryService;
+
+    public PostServiceImpl(PostRepository repository, CategoryService categoryService){
         this.repository = repository;
-        this.temporaryPosts = new ArrayList<>();
-        temporaryPosts.add(new Post("Title 1", "My first content"));
-        temporaryPosts.add(new Post("Title 2", "My second content"));
-        temporaryPosts.add(new Post("Title 3", "My third content"));
+        this.categoryService = categoryService;
     }
   /*  @Override
     public List<Post> getAllByCategoryId(UUID categoryId) {
@@ -50,8 +48,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post create(String title, String content, Category category) {
-        Post post = new Post(title, content);
+    public Post create(String title, String content, UUID categoryId) throws CategoryNotFoundByIdException {
+        Category category = categoryService.getById(categoryId);
+        Post post = new Post(title, content, category);
         return repository.save(post);
     }
 

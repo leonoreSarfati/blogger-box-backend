@@ -46,19 +46,15 @@ public class CategoryController {
 
     @GetMapping
     @Operation(
-            summary = "Get categories by name"
+            summary = "Get categories (by name if specified)"
     )
-    public List<Category> getAllCategories(@RequestParam String name) throws CategoryNotFoundByNameException {
-        return categoryService.getAllByName(name);
-    }
-
-    @GetMapping
-    @Operation(
-            summary = "Get all categories"
-    )
-    public ResponseEntity<List<Category>> getAllCategories(){
-        List<Category> categories= categoryService.getAll();
-        return ResponseEntity.ok(categories);
+    public ResponseEntity<List<Category>> getAllByNameCategories(@RequestParam(required = false) String name) throws CategoryNotFoundByNameException {
+        if (name == null){
+            List<Category> categories= categoryService.getAll();
+            return ResponseEntity.ok(categories);
+        } else {
+            return ResponseEntity.ok(categoryService.getAllByName(name));
+        }
     }
 
     @GetMapping("/{id}")
@@ -104,7 +100,7 @@ public class CategoryController {
     )
     public ResponseEntity<Category> deleteCategory(
             @Parameter(description = "Id of the category to retrieve")
-            @PathVariable UUID id){
+            @PathVariable UUID id) throws CategoryNotFoundByIdException {
         categoryService.deleteById(id);
         return ResponseEntity.ok().build();
     }
